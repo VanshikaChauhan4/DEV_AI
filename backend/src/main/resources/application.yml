@@ -1,0 +1,18 @@
+server:
+  port: ${PORT:8080}
+spring:
+  application:
+    name: devmind-ai
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:file:./data/devmind;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DATABASE_USER:sa}
+    password: ${DATABASE_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

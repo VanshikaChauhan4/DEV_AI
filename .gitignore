@@ -1,0 +1,16 @@
+node_modules/
+dist/
+target/
+.venv/
+__pycache__/
+.env
+*.log
+.idea/
+.vscode/
+.DS_Store
+
+# Local database and generated files
+backend/data/
+*.mv.db
+*.trace.db
+*.tsbuildinfo

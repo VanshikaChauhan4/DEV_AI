@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Link, Route, Routes, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+<<<<<<< HEAD
 import { ArrowRight, BrainCircuit, Network, Radar, ShieldCheck, Sparkles, TerminalSquare, Workflow, Code2, ClipboardCheck, Bug, Eye } from 'lucide-react';
+=======
+import { ArrowRight, BrainCircuit, Network, Radar, ShieldCheck, Sparkles, TerminalSquare, Workflow } from 'lucide-react';
+>>>>>>> 9bb58f8d687caa0dd1d9aaf5892ee32eb38032ea
 import { ParallaxComponent } from '../components/ui/parallax-scrolling';
 import { FeatureWheel } from '../components/landing/FeatureWheel';
 import { CurveCarousel } from '../components/landing/CurveCarousel';
 import { features } from '../lib/features';
+<<<<<<< HEAD
 import SecretShield from '../secret-shield/SecretShield';
 import ChangeImpactRadar from '../change-impact-radar/ChangeImpactRadar';
+=======
+>>>>>>> 9bb58f8d687caa0dd1d9aaf5892ee32eb38032ea
 
 const steps = [
   { n: '01', title: 'Understand', icon: Network, text: 'Index repository structure, dependencies and relevant history.' },
@@ -100,6 +107,7 @@ const agentInfo=[
 {slug:'test',name:'Test Agent',description:'Prepare reproducible Maven and JUnit verification commands.',hint:'Paste test cases, acceptance criteria or Maven output.'},
 {slug:'debugger',name:'Debugger Agent',description:'Triage error messages with bounded debugging steps.',hint:'Paste a stack trace or compiler error.'},
 {slug:'reviewer',name:'Reviewer Agent',description:'Review change evidence and flag risks before human approval.',hint:'Paste the diff or describe the change.'}];
+<<<<<<< HEAD
 type AgentResult={id:number;agent:string;input:string;output:string;mode?:string;createdAt:string};
 function AgentPage(){
   const {slug}=useParams();
@@ -171,3 +179,9 @@ function AgentPage(){
   </main>;
 }
 export default function App() { return <Routes><Route path="/" element={<Landing/>}/><Route path="/agents/:slug" element={<AgentPage/>}/><Route path="/tools/secrets" element={<SecretShield/>}/><Route path="/tools/risk" element={<ChangeImpactRadar/>}/><Route path="/dashboard" element={<Workspace title="Engineering workspace"/>}/>{features.map((f) => <Route key={f.path} path={f.path} element={<Workspace title={f.title}/>}/>)}<Route path="*" element={<Workspace title="Page not found"/>}/></Routes>; }
+=======
+type AgentResult={id:number;agent:string;input:string;output:string;createdAt:string};
+function AgentPage(){const {slug}=useParams();const a=agentInfo.find(x=>x.slug===slug);const [input,setInput]=useState('');const [out,setOut]=useState('');const [history,setHistory]=useState<AgentResult[]>([]);const [error,setError]=useState('');const [busy,setBusy]=useState(false);useEffect(()=>{if(!a)return;fetch('/api/agents/'+a.slug+'/history').then(r=>r.json()).then(setHistory).catch(()=>setError('Start the backend on port 8080.'));},[slug]);if(!a)return <main className="agent-page"><Link to="/">← Home</Link><h1>Agent not found</h1></main>;const submit=async()=>{setBusy(true);setError('');try{const r=await fetch('/api/agents/'+a.slug+'/execute',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input})});const d=await r.json();if(!r.ok)throw Error(d.error||'Failed');setOut(d.output);setHistory(h=>[d,...h]);}catch(e){setError(String(e));}finally{setBusy(false)}};return <main className="agent-page"><nav><Link to="/">← DevMind AI</Link><Link to="/dashboard">Dashboard</Link></nav><span className="eyebrow">INDEPENDENT AGENT WORKSPACE / {a.slug.toUpperCase()}</span><h1>{a.name}</h1><p>{a.description}</p><div className="agent-workbench"><div className="workspace-panel"><h3>Input</h3><textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={a.hint}/><button className="button-primary" disabled={!input.trim()||busy} onClick={submit}>{busy?'Working…':'Execute this stage'} →</button>{error&&<p role="alert">{error}</p>}<small>Rule-based demo stage. No external AI, repository write, test execution or PR is claimed.</small></div><div className="workspace-panel"><h3>Stage output</h3><pre className="agent-output">{out||'Results appear here after execution.'}</pre></div></div><div className="workspace-panel"><h3>Saved {a.name} history</h3>{history.map(h=><button className="dev-history" key={h.id} onClick={()=>setOut(h.output)}>#{h.id} · {new Date(h.createdAt).toLocaleString()} · {h.input.slice(0,90)}</button>)}</div><div className="agent-nav">{agentInfo.map(x=><Link key={x.slug} to={'/agents/'+x.slug}>{x.name} ↗</Link>)}</div></main>}
+function PracticalTool({kind}:{kind:'secrets'|'risk'}){const [input,setInput]=useState('');const [result,setResult]=useState<any>(null);const [error,setError]=useState('');const run=async()=>{try{const r=await fetch('/api/tools/'+kind,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input})});const d=await r.json();if(!r.ok)throw Error(d.error);setResult(d)}catch(e){setError(String(e))}};return <main className="agent-page"><Link to="/">← DevMind AI</Link><span className="eyebrow">REAL-WORLD ENGINEERING TOOL</span><h1>{kind==='secrets'?'Secret Shield':'Change Impact Radar'}</h1><p>{kind==='secrets'?'Detect credential patterns without sending pasted code to a third-party LLM.':'Get a transparent, explainable heuristic risk score before merging a change.'}</p><div className="workspace-panel"><textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={kind==='secrets'?'Paste code or configuration here (use dummy credentials for class demo).':'Describe your planned changes, affected files and tests.'}/><button className="button-primary" onClick={run} disabled={!input.trim()}>Analyze →</button>{error&&<p>{error}</p>}{result&&<pre className="agent-output">{JSON.stringify(result,null,2)}</pre>}</div><small>Heuristic screening, not a security audit or proof of safety. Inputs are processed in memory and not saved by these endpoints.</small></main>}
+export default function App() { return <Routes><Route path="/" element={<Landing/>}/><Route path="/agents/:slug" element={<AgentPage/>}/><Route path="/tools/secrets" element={<PracticalTool kind="secrets"/>}/><Route path="/tools/risk" element={<PracticalTool kind="risk"/>}/><Route path="/dashboard" element={<Workspace title="Engineering workspace"/>}/>{features.map((f) => <Route key={f.path} path={f.path} element={<Workspace title={f.title}/>}/>)}<Route path="*" element={<Workspace title="Page not found"/>}/></Routes>; }
+>>>>>>> 9bb58f8d687caa0dd1d9aaf5892ee32eb38032ea
